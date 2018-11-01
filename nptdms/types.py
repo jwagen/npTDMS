@@ -219,6 +219,23 @@ class TimeStamp(TdmsType):
                 timedelta(microseconds=micro_seconds))
 
 
+@tds_data_type(0x10000d, np.complex128)
+class ComplexDoubleFloat(StructType):
+    size = 16
+    def __init__(self, value):
+        self.value = value
+        real = np.real(value)
+        imag = np.imag(value)
+        self.bytes = _struct_pack('<d', real) + _struct_pack('<d', imag)
+
+    @staticmethod
+    def read(file, endianness="<"):
+        size = 16
+        bytes_data = file.read(size)
+        real = _struct_unpack(endianness + 'd', bytes)[0]
+        imag = _struct_unpack(endianness + 'd', bytes)[1]
+        return np.complex128(real, imag)
+
 @tds_data_type(0xFFFFFFFF, np.int16)
 class DaqMxRawData(TdmsType):
     size = 2

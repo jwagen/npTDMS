@@ -963,10 +963,11 @@ class _TdmsSegmentObject(object):
             self.tdms_object.has_data = True
 
             # Read the data type
+            data_type_val = types.Uint32.read(f)
             try:
-                self.data_type = types.tds_data_types[types.Uint32.read(f)]
+                self.data_type = types.tds_data_types[data_type_val]
             except KeyError:
-                raise KeyError("Unrecognised data type")
+                raise KeyError("Unrecognised data type: %x", data_type_val)
             if (self.tdms_object.data_type is not None and
                     self.data_type != self.tdms_object.data_type):
                 raise ValueError(
